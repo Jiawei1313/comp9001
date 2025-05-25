@@ -1,0 +1,195 @@
+
+
+class Pet :
+    def __init__(self,name):
+        self.name = name
+        self.hunger = 50
+        self.happiness = 50
+        self.health = 50
+        self.inventory = {
+            "Treats" : 5,
+            "Toys" : 1
+        }
+    
+    def feed(self):
+        print(f"\nYou fed {self.name}.")
+        if self.hunger > 20 :
+            self.hunger -= 20
+        else :
+            self.hunger = 0
+        if self.happiness < 95 :
+            self.happiness += 5
+        else :
+            self.happiness = 100
+
+    def play(self):
+        print(f"\nYou played with {self.name}.")
+        if self.happiness < 80 :
+            self.happiness += 20
+        else :
+            self.happiness = 100
+        if self.health > 5 :
+            self.health -= 5
+        else :
+            self.health = 0
+        if self.hunger < 90 :
+            self.hunger += 10
+        else :
+            self.hunger = 100
+
+    def rest(self) :
+        print(f"\n{self.name} is resting.")
+        if self.health < 90 :
+            self.health += 10
+        else :
+            self.health = 100
+        if self.hunger < 95 :
+            self.hunger += 5
+        else :
+            self.hunger = 100
+
+    def give_treat(self):
+        if self.inventory["Treats"] > 0 :
+            print(f"\nYou gave a treat to {self.name}.")
+            if self.hunger > 15 :
+                self.hunger -= 15
+            else :
+                self.hunger = 0
+            if self.happiness < 85 :
+                self.happiness += 15
+            else :
+                self.happiness = 100
+            self.inventory["treats"] -= 1
+        else:
+            print("\nYou have no treats!")
+
+    def use_toy(self):
+        if self.inventory["Toys"] > 0 :
+            print(f"\n{self.name} is playing with toys.")
+            if self.happiness < 80 :
+                self.happiness += 20
+            else :
+                self.happiness = 100
+        else :
+            print("\nYou have no toys!")
+
+    def show_inventory(self):
+        print("\nInventory:")
+        for item, quantity in self.inventory.items():
+            print(f"{item}: {quantity}")
+
+    def show_status(self) :
+        print(f"\n{self.name}'s Current Status:")
+        print(f"Hunger: {self.hunger}")
+        print(f"Happiness: {self.happiness}")
+        print(f"Health: {self.health}")
+    
+    def is_alive(self) :
+        if self.hunger >= 100 :
+            print(f"\n{self.name} left because of hunger!")
+            return False
+        if self.happiness <= 0 :
+            print(f"\n{self.name} left because of unhappiness!")
+            return False
+        if self.health <= 0 :
+            print(f"\n{self.name} got sick and passed away!")
+            return False
+        return True
+
+
+def save_pet(pet):
+    with open("save_pet.txt", "w") as f :
+        f.write(pet.name + "\n")
+        f.write(str(pet.hunger) + "\n")
+        f.write(str(pet.happiness) + "\n")
+        f.write(str(pet.health) + "\n")
+        f.write(str(pet.inventory["Treats"]) + "\n")
+        f.write(str(pet.inventory["Toys"]) + "\n")
+    print("Pet saved successfully.")
+
+def load_pet():
+    try :
+        with open("save_pet.txt", "r") as f :
+            lines = f.readlines()
+            name = lines[0].strip()
+            hunger = int(lines[1])
+            happiness = int(lines[2])
+            health = int(lines[3])
+            Treats = int(lines[4])
+            Toys = int(lines[5])
+            pet = Pet(name)
+            pet.hunger = hunger
+            pet.happiness = happiness
+            pet.health = health
+            pet.inventory = {"Treats": Treats, "Toys": Toys}
+            print("Pet loaded successfully!")
+            return pet
+
+    except FileNotFoundError :
+        print("No save file found. Please creating a new pet.")
+        return None
+
+
+def main():
+    print("Welcome to the virtual pet game!")
+
+    pet = load_pet()
+    if not pet:
+        name = input("Please give a name for your pet. ")
+        pet = Pet(name)
+
+    while pet.is_alive():
+        pet.show_status()
+        print ("\nWhat would you want to do?")
+        print("1. Feed")
+        print("2. Play")
+        print("3. Rest")
+        print("4. Give Treat")
+        print("5. Use Toy")
+        print("6. Show Inventory")
+        print("7. Save And Quit")
+
+        choice = input("Enter your choice (1-7): ").strip()
+        if choice == "1" :
+            pet.feed()
+        elif choice == "2" :
+            pet.play()
+        elif choice == "3" :
+            pet.rest()
+        elif choice == "4" :
+            pet.give_treat()
+        elif choice == "5" :
+            pet.use_toy()
+        elif choice == "6" :
+            pet.show_inventory()
+        elif choice == "7" :
+            save_pet(pet)
+            print("Goodbye! Remember to come back soon to take care of your pet.")
+            break
+        else:
+            print("Invalid choice! Please select from 1 to 7.")
+
+        
+        if pet.hunger < 95 :
+            pet.hunger += 5
+        else :
+            pet.hunger = 100
+        if pet.happiness > 3 :
+            pet.happiness -= 3
+        else :
+            pet.happiness = 0
+        if pet.health > 1 :
+            pet.health -= 1
+        else :
+            pet.health = 0
+    
+    print("Game Over.")
+
+if __name__ == "__main__":
+        main()
+
+
+
+
+
+
